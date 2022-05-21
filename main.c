@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include "raylib.h"
+//https://ibb.co/6wQV27W grüner geist
+//https://ibb.co/cDdhQL3 blauer Geist
+//https://ibb.co/zFNRQR1
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
