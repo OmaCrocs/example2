@@ -2,10 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include "raylib.h"
-//https://ibb.co/6wQV27W grüner geist
-//https://ibb.co/cDdhQL3 blauer Geist
-//https://ibb.co/zFNRQR1
-
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
 #endif
@@ -43,14 +39,18 @@ void startscreen() {
     Texture2D mute = LoadTexture("../assets/mute-mute.png");
     Texture2D sound = LoadTexture("../assets/sound-button.png");
     Texture2D pacman_start = LoadTexture("../assets/pacman-start.png");
+    Texture2D play = LoadTexture("../assets/play-button.png");
+    Texture2D logo = LoadTexture("../assets/logo.png");
 
     // Define frame rectangle for drawing
     float frameHeight = (float) mute.height / NUM_FRAMES;
     Rectangle sourceRec = {0, 0, (float) mute.width, frameHeight};
 
-    Rectangle btnBounds = {750, 750, 100, 100};
+    Rectangle btnBoundsSound = {750, 750, 100, 100};
+    Rectangle btnBoundsPlay = {350, 600, 200, 200};
     int btnState = 0;
-    bool btnAction = false;
+    bool btnActionSound = false;
+    bool btnActionPlay = false;
     Vector2 mousePoint = {0.0f, 0.0f};
 
 
@@ -61,22 +61,35 @@ void startscreen() {
     while (!WindowShouldClose()) {
         //Button
         mousePoint = GetMousePosition();
-        btnAction = false;
-        if (CheckCollisionPointRec(mousePoint, btnBounds)) {
+        btnActionSound = false;
+        btnActionPlay = false;
+        if (CheckCollisionPointRec(mousePoint, btnBoundsSound)) {
             if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
                 btnState = 2;
             if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                btnAction = true;
+                btnActionSound = true;
             }
-        } else
-            btnState = 0;
+        } else if (CheckCollisionPointRec(mousePoint, btnBoundsPlay)) {
+            if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+                btnState = 2;
+            if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                btnActionPlay = true;
+            }
+        }
+        btnState = 0;
         sourceRec.y = btnState * frameHeight;
 
 
         BeginDrawing();
         DrawTexture(sound, 750, 750, WHITE);
+        DrawTexture(play, 350, 600, WHITE);
+        DrawTexture(logo, 100, 100, WHITE);
 
-        if (btnAction == true) {
+        if (btnActionPlay == true) {
+            mapselect();
+        }
+
+        if (btnActionSound == true) {
             sound = LoadTexture("../assets/mute-button.png");
             DrawTexture(sound, 750, 750, WHITE);
             StopMusicStream(startmusic);
@@ -89,26 +102,13 @@ void startscreen() {
 
         //PACMAN TEXT
         ClearBackground(BLACK);
-        DrawText("PACMAN", 240, 150, 100, RED);
-        DrawText("PACMAN", 235, 155, 100, YELLOW);
 
         //PACMAN FIGURE
-        DrawTexture(pacman_start, 100, 50, YELLOW);
-
-
-        DrawText("Press SPACE to play!", 140, 550, 60, RED);
-        DrawText("Press SPACE to play!", 135, 555, 60, YELLOW);
+        DrawTexture(pacman_start, 270, 215, YELLOW);
 
 
         EndDrawing();
 
-        if (IsKeyPressed(KEY_SPACE)) {
-            //TODO: BUTTON INSTEAD OF SPACE!
-
-            CloseWindow();
-            StopMusicStream(startmusic);
-            mapselect();
-        }
     }
 
 }
